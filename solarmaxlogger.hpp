@@ -23,7 +23,7 @@ class SolarMaxLogger : public QObject
         SqlStorage* sql;
 
     private slots:
-        void printData();
+        void printData(InverterData* data);
 };
 
 #endif // INVERTERQUERY_HPP

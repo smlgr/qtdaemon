@@ -6,6 +6,8 @@
 #include <QList>
 #include <QPair>
 
+#include "inverterdata.hpp"
+
 class InverterComm: public QObject
 {
         Q_OBJECT
@@ -26,7 +28,6 @@ class InverterComm: public QObject
         int getId() const;
         void setId(int value);
 
-        QList<QPair<QString, int> > getResponse() const;
 
     private:
         QString ip;
@@ -36,7 +37,6 @@ class InverterComm: public QObject
 
         bool running;
         QTcpSocket* sock;
-        QList<QPair<QString, int>> response;
 
         QString prepareQuery();
         bool checkInvParams();
@@ -45,7 +45,7 @@ class InverterComm: public QObject
         void closeSocket();
 
     signals:
-        void newline();
+        void newResponse(InverterData*);
 
     private slots:
         void writeNewQuery();

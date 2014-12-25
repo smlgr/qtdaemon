@@ -24,7 +24,7 @@ SolarMaxLogger::SolarMaxLogger(QObject *parent) : QObject(parent)
                    SMLGR_CONFIG_DEFAULT_SQL_DATABASE);
 
     connect(timer, SIGNAL(timeout()), inv, SLOT(sendNewQuery()));
-    connect(inv, SIGNAL(newline()), this, SLOT(printData()));
+    connect(inv, SIGNAL(newResponse(InverterData*)), this, SLOT(printData(InverterData*)));
 }
 
 SolarMaxLogger::~SolarMaxLogger()
@@ -32,9 +32,9 @@ SolarMaxLogger::~SolarMaxLogger()
 
 }
 
-void SolarMaxLogger::printData()
+void SolarMaxLogger::printData(InverterData* data)
 {
-    qDebug() << inv->getResponse();
+    qDebug() << data->getRaw();
 }
 
 void SolarMaxLogger::start()

@@ -7,6 +7,7 @@
 #include <QDebug>
 
 #include "invertercomm.hpp"
+#include "inverterdata.hpp"
 
 InverterComm::InverterComm(QObject *parent) : QObject(parent)
 {
@@ -62,11 +63,6 @@ void InverterComm::setId(int value)
     id = value;
 }
 
-QList<QPair<QString, int> > InverterComm::getResponse() const
-{
-    return response;
-}
-
 void InverterComm::sendNewQuery()
 {
     if(running)
@@ -95,23 +91,48 @@ void InverterComm::readResponse()
 
 void InverterComm::parseResponse(QByteArray data)
 {
+    InverterData* response = new InverterData();
+
     QString resp(data);
+    response->setRaw(resp);
 
     QStringList frag = resp.split("|");
-
-    response.clear();
 
     foreach(QString elem, frag[1].mid(4).split(";")) {
         QStringList i = elem.split("=");
 
-        QPair<QString, int> e;
-        e.first = i[0];
-        e.second = i[1].toInt(nullptr, 16);
+        if(i[0] == "UDC")
+            response->setUdc((float) i[1].toInt(nullptr, 16) / 10);
 
-        response.append(e);
+        if(i[0] == "IDC")
+            response->setIdc((float) i[1].toInt(nullptr, 16) / 100);
+
+        if(i[0] == "UL1")
+            response->setUl1((float) i[1].toInt(nullptr, 16) / 10);
+
+        if(i[0] == "IL1")
+            response->setIl1((float) i[1].toInt(nullptr, 16) / 100);
+
+        if(i[0] == "PAC")
+            response->setPac((float) i[1].toInt(nullptr, 16) / 2);
+
+        if(i[0] == "PRL")
+            response->setPrl(i[1].toInt(nullptr, 16));
+
+        if(i[0] == "TKK")
+            response->setTkk(i[1].toInt(nullptr, 16));
+
+        if(i[0] == "TNF")
+            response->setTnf((float) i[1].toInt(nullptr, 16) / 100);
+
+        if(i[0] == "KDY")
+            response->setKdy((float) i[1].toInt(nullptr, 16) / 10);
+
+        if(i[0] == "KLD")
+            response->setKld((float) i[1].toInt(nullptr, 16) / 10);
     }
 
-    emit newline();
+    emit newResponse(response);
 }
 
 void InverterComm::closeSocket()
