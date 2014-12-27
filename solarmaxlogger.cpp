@@ -5,6 +5,7 @@
 #include "invertercomm.hpp"
 #include "inverterdata.hpp"
 #include "sqlstorage.hpp"
+#include "updatemobile.hpp"
 
 SolarMaxLogger::SolarMaxLogger(QObject *parent) : QObject(parent)
 {
@@ -23,9 +24,12 @@ SolarMaxLogger::SolarMaxLogger(QObject *parent) : QObject(parent)
                 SMLGR_CONFIG_DEFAULT_SQL_USERNAME, SMLGR_CONFIG_DEFAULT_SQL_PASSWORD,
                 SMLGR_CONFIG_DEFAULT_SQL_DATABASE);
 
+    mobile = new UpdateMobile(this);
+
     connect(timer, SIGNAL(timeout()), inv, SLOT(sendNewQuery()));
     connect(inv, SIGNAL(newResponse(InverterData*)), this, SLOT(printData(InverterData*)));
     connect(inv, SIGNAL(newResponse(InverterData*)), sql, SLOT(addDataIntoQueue(InverterData*)));
+    connect(inv, SIGNAL(newResponse(InverterData*)), mobile, SLOT(update(InverterData*)));
 }
 
 SolarMaxLogger::~SolarMaxLogger()

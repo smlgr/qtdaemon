@@ -2,6 +2,9 @@
 #define UPDATEMOBILE_HPP
 
 #include <QObject>
+#include <QNetworkReply>
+
+#include "inverterdata.hpp"
 
 class UpdateMobile : public QObject
 {
@@ -11,7 +14,10 @@ class UpdateMobile : public QObject
         ~UpdateMobile();
 
     public slots:
-        void update();
+        void update(InverterData*data);
+
+    private slots:
+        void confirm(QNetworkReply* reply);
 };
 
 #endif // UPDATEMOBILE_HPP

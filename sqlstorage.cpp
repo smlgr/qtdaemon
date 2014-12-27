@@ -16,7 +16,7 @@ SqlStorage::SqlStorage(QObject *parent) : QObject(parent)
     queue = new QQueue<InverterData*>();
 
     timer = new QTimer();
-    timer->setInterval(5000);
+    timer->setInterval(60000);
 
     connect(timer, SIGNAL(timeout()), this, SLOT(copyQueueToDatabase()));
 }
@@ -58,15 +58,11 @@ void SqlStorage::config(QString ip, int port, QString username, QString password
     sqldb->setUserName(username);
     sqldb->setPassword(password);
     sqldb->setDatabaseName(database);
-
-    qDebug() << sqldb->lastError();
 }
 
 void SqlStorage::addDataIntoQueue(InverterData* data)
 {
     queue->enqueue(data);
-
-    qDebug() << "addDataIntoQueue" << queue->count();
 }
 
 void SqlStorage::copyQueueToDatabase()

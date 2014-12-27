@@ -8,6 +8,7 @@
 #include "invertercomm.hpp"
 #include "inverterdata.hpp"
 #include "sqlstorage.hpp"
+#include "updatemobile.hpp"
 
 class SolarMaxLogger : public QObject
 {
@@ -23,6 +24,7 @@ class SolarMaxLogger : public QObject
         QTimer* timer;
         InverterComm* inv;
         SqlStorage* sql;
+        UpdateMobile* mobile;
 
     private slots:
         void printData(InverterData* data);
