@@ -104,19 +104,19 @@ void InverterComm::parseResponse(QByteArray data)
         int val = i[1].toInt(nullptr, 16);
 
         if(i[0] == "UDC")
-            response->setUdc((float) (val / 10));
+            response->setUdc((float) val / 10);
 
         if(i[0] == "IDC")
-            response->setIdc((float) (val / 100));
+            response->setIdc((float) val / 100);
 
         if(i[0] == "UL1")
-            response->setUl1((float) (val / 10));
+            response->setUl1((float) val / 10);
 
         if(i[0] == "IL1")
-            response->setIl1((float) (val / 100));
+            response->setIl1((float) val / 100);
 
         if(i[0] == "PAC")
-            response->setPac((float) (val / 2));
+            response->setPac((float) val / 2);
 
         if(i[0] == "PRL")
             response->setPrl(val);
@@ -125,13 +125,13 @@ void InverterComm::parseResponse(QByteArray data)
             response->setTkk(val);
 
         if(i[0] == "TNF")
-            response->setTnf((float) (val / 100));
+            response->setTnf((float) val / 100);
 
         if(i[0] == "KDY")
-            response->setKdy((float) (val / 10));
+            response->setKdy((float) val / 10);
 
         if(i[0] == "KLD")
-            response->setKld((float) (val / 10));
+            response->setKld((float) val / 10);
     }
 
     emit newResponse(response);
