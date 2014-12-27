@@ -27,7 +27,8 @@ SolarMaxLogger::SolarMaxLogger(QObject *parent) : QObject(parent)
     mobile = new UpdateMobile(this);
 
     connect(timer, SIGNAL(timeout()), inv, SLOT(sendNewQuery()));
-    // connect(inv, SIGNAL(newResponse(InverterData*)), this, SLOT(printData(InverterData*)));
+
+    connect(inv, SIGNAL(newResponse(InverterData*)), this, SLOT(printData(InverterData*)));
     connect(inv, SIGNAL(newResponse(InverterData*)), sql, SLOT(addDataIntoQueue(InverterData*)));
     connect(inv, SIGNAL(newResponse(InverterData*)), mobile, SLOT(update(InverterData*)));
 }

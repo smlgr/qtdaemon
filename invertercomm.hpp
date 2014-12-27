@@ -28,6 +28,7 @@ class InverterComm: public QObject
         int getId() const;
         void setId(int value);
 
+        InverterData* getResponse() const;
 
     private:
         QString ip;
@@ -37,6 +38,7 @@ class InverterComm: public QObject
 
         bool running;
         QTcpSocket* sock;
+        InverterData* response;
 
         QString prepareQuery();
         bool checkInvParams();

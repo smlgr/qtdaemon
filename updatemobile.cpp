@@ -32,8 +32,8 @@ void UpdateMobile::update(InverterData* data)
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
-    QNetworkAccessManager* networkManager = new QNetworkAccessManager(this);
-    // connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(confirm(QNetworkReply*)));
+    networkManager = new QNetworkAccessManager(this);
+    connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(confirm(QNetworkReply*)));
 
     networkManager->post(request, params.encodedQuery());
 }
@@ -41,4 +41,6 @@ void UpdateMobile::update(InverterData* data)
 void UpdateMobile::confirm(QNetworkReply* reply)
 {
     qDebug() << reply->readAll();
+
+    delete networkManager;
 }

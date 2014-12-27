@@ -63,6 +63,11 @@ void InverterComm::setId(int value)
     id = value;
 }
 
+InverterData* InverterComm::getResponse() const
+{
+    return response;
+}
+
 void InverterComm::sendNewQuery()
 {
     if(running)
@@ -89,7 +94,10 @@ void InverterComm::readResponse()
 
 void InverterComm::parseResponse(QByteArray data)
 {
-    InverterData* response = new InverterData();
+    if(response != nullptr)
+        delete response;
+
+    response = new InverterData();
 
     response->setDatetime(QDateTime::currentDateTime());
 
