@@ -4,7 +4,6 @@
 #include <QByteArray>
 #include <QPair>
 #include <QList>
-#include <QDebug>
 
 #include "invertercomm.hpp"
 #include "inverterdata.hpp"
@@ -15,6 +14,7 @@ InverterComm::InverterComm(QObject *parent) : QObject(parent)
 
     connect(sock, SIGNAL(connected()), this, SLOT(writeNewQuery()));
     connect(sock, SIGNAL(readyRead()), this, SLOT(readResponse()));
+    connect(sock, SIGNAL(disconnected()), this, SLOT(resetRunning()));
 
     running = false;
 }
@@ -66,7 +66,7 @@ void InverterComm::setId(int value)
 void InverterComm::sendNewQuery()
 {
     if(running)
-        return;
+        closeSocket();
 
     if(!checkInvParams())
         return;
@@ -84,8 +84,6 @@ void InverterComm::readResponse()
     QByteArray data = sock->readAll();
     closeSocket();
 
-    qDebug() << "RECV:" << data;
-
     parseResponse(data);
 }
 
@@ -93,43 +91,47 @@ void InverterComm::parseResponse(QByteArray data)
 {
     InverterData* response = new InverterData();
 
+    response->setDatetime(QDateTime::currentDateTime());
+
     QString resp(data);
     response->setRaw(resp);
 
     QStringList frag = resp.split("|");
 
-    foreach(QString elem, frag[1].mid(4).split(";")) {
+    foreach(QString elem, frag[1].mid(3).split(";")) {
         QStringList i = elem.split("=");
 
+        int val = i[1].toInt(nullptr, 16);
+
         if(i[0] == "UDC")
-            response->setUdc((float) i[1].toInt(nullptr, 16) / 10);
+            response->setUdc((float) (val / 10));
 
         if(i[0] == "IDC")
-            response->setIdc((float) i[1].toInt(nullptr, 16) / 100);
+            response->setIdc((float) (val / 100));
 
         if(i[0] == "UL1")
-            response->setUl1((float) i[1].toInt(nullptr, 16) / 10);
+            response->setUl1((float) (val / 10));
 
         if(i[0] == "IL1")
-            response->setIl1((float) i[1].toInt(nullptr, 16) / 100);
+            response->setIl1((float) (val / 100));
 
         if(i[0] == "PAC")
-            response->setPac((float) i[1].toInt(nullptr, 16) / 2);
+            response->setPac((float) (val / 2));
 
         if(i[0] == "PRL")
-            response->setPrl(i[1].toInt(nullptr, 16));
+            response->setPrl(val);
 
         if(i[0] == "TKK")
-            response->setTkk(i[1].toInt(nullptr, 16));
+            response->setTkk(val);
 
         if(i[0] == "TNF")
-            response->setTnf((float) i[1].toInt(nullptr, 16) / 100);
+            response->setTnf((float) (val / 100));
 
         if(i[0] == "KDY")
-            response->setKdy((float) i[1].toInt(nullptr, 16) / 10);
+            response->setKdy((float) (val / 10));
 
         if(i[0] == "KLD")
-            response->setKld((float) i[1].toInt(nullptr, 16) / 10);
+            response->setKld((float) (val / 10));
     }
 
     emit newResponse(response);
@@ -138,7 +140,10 @@ void InverterComm::parseResponse(QByteArray data)
 void InverterComm::closeSocket()
 {
     sock->close();
+}
 
+void InverterComm::resetRunning()
+{
     running = false;
 }
 
@@ -148,7 +153,7 @@ void InverterComm::writeNewQuery()
         return;
 
     QString output = prepareQuery();
-    qDebug() << "SEND:" << output;
+
     sock->write(output.toUtf8());
 }
 

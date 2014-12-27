@@ -12,13 +12,15 @@ SOURCES += main.cpp \
     invertercomm.cpp \
     solarmaxlogger.cpp \
     sqlstorage.cpp \
-    inverterdata.cpp
+    inverterdata.cpp \
+    updatemobile.cpp
 
 HEADERS += \
     invertercomm.hpp \
     config.hpp \
     solarmaxlogger.hpp \
     sqlstorage.hpp \
-    inverterdata.hpp
+    inverterdata.hpp \
+    updatemobile.hpp
 
 QMAKE_CXXFLAGS += -std=c++0x

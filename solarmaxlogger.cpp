@@ -3,6 +3,7 @@
 #include "config.hpp"
 #include "solarmaxlogger.hpp"
 #include "invertercomm.hpp"
+#include "inverterdata.hpp"
 #include "sqlstorage.hpp"
 
 SolarMaxLogger::SolarMaxLogger(QObject *parent) : QObject(parent)
@@ -18,18 +19,17 @@ SolarMaxLogger::SolarMaxLogger(QObject *parent) : QObject(parent)
     inv->setQuery(SMLGR_CONFIG_DEFAULT_QUERY);
 
     sql = new SqlStorage(this);
-    sql->selectDbType(SMLGR_CONFIG_DEFAULT_SQL_TYPE);
-    sql->dbConnect(SMLGR_CONFIG_DEFAULT_SQL_ADDR, SMLGR_CONFIG_DEFAULT_SQL_PORT,
-                   SMLGR_CONFIG_DEFAULT_SQL_USERNAME, SMLGR_CONFIG_DEFAULT_SQL_PASSWORD,
-                   SMLGR_CONFIG_DEFAULT_SQL_DATABASE);
+    sql->config(SMLGR_CONFIG_DEFAULT_SQL_ADDR, SMLGR_CONFIG_DEFAULT_SQL_PORT,
+                SMLGR_CONFIG_DEFAULT_SQL_USERNAME, SMLGR_CONFIG_DEFAULT_SQL_PASSWORD,
+                SMLGR_CONFIG_DEFAULT_SQL_DATABASE);
 
     connect(timer, SIGNAL(timeout()), inv, SLOT(sendNewQuery()));
     connect(inv, SIGNAL(newResponse(InverterData*)), this, SLOT(printData(InverterData*)));
+    connect(inv, SIGNAL(newResponse(InverterData*)), sql, SLOT(addDataIntoQueue(InverterData*)));
 }
 
 SolarMaxLogger::~SolarMaxLogger()
 {
-
 }
 
 void SolarMaxLogger::printData(InverterData* data)
@@ -40,9 +40,11 @@ void SolarMaxLogger::printData(InverterData* data)
 void SolarMaxLogger::start()
 {
     timer->start();
+    sql->start();
 }
 
 void SolarMaxLogger::stop()
 {
     timer->stop();
+    sql->stop();
 }

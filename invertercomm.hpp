@@ -50,6 +50,7 @@ class InverterComm: public QObject
     private slots:
         void writeNewQuery();
         void readResponse();
+        void resetRunning();
 
     public slots:
         void sendNewQuery();

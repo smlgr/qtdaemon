@@ -4,6 +4,10 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QString>
+#include <QQueue>
+#include <QTimer>
+
+#include "inverterdata.hpp"
 
 class SqlStorage : public QObject
 {
@@ -12,17 +16,21 @@ class SqlStorage : public QObject
         explicit SqlStorage(QObject *parent = 0);
         ~SqlStorage();
 
-        void selectDbType(QString type);
-        void dbConnect(QString ip, int port, QString username, QString password, QString database);
-        bool isConnected();
+        void selectDbType();
+        void config(QString ip, int port, QString username, QString password, QString database);
+        void start();
+        void stop();
 
     private:
         QSqlDatabase* sqldb;
-
-
-    signals:
+        QQueue<InverterData*>* queue;
+        QTimer* timer;
 
     public slots:
+        void addDataIntoQueue(InverterData* data);
+
+    private slots:
+        void copyQueueToDatabase();
 };
 
 #endif // SQLSTORAGE_HPP

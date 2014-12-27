@@ -10,6 +10,16 @@ InverterData::~InverterData()
 
 }
 
+QDateTime InverterData::getDatetime() const
+{
+    return datetime;
+}
+
+void InverterData::setDatetime(const QDateTime& value)
+{
+    datetime = value;
+}
+
 QString InverterData::getRaw() const
 {
     return raw;

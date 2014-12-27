@@ -2,12 +2,16 @@
 #define INVERTERDATA_HPP
 
 #include <QString>
+#include <QDateTime>
 
 class InverterData
 {
     public:
         InverterData();
         ~InverterData();
+
+        QDateTime getDatetime() const;
+        void setDatetime(const QDateTime& value);
 
         QString getRaw() const;
         void setRaw(const QString& value);
@@ -43,6 +47,7 @@ class InverterData
         void setKld(float value);
 
     private:
+        QDateTime datetime;
         QString raw;
         float udc;
         float idc;

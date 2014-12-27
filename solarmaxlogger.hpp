@@ -3,8 +3,10 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QQueue>
 
 #include "invertercomm.hpp"
+#include "inverterdata.hpp"
 #include "sqlstorage.hpp"
 
 class SolarMaxLogger : public QObject
