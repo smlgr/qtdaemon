@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QTimer>
 #include <QVariant>
+#include <QDebug>
 
 #include "sqlstorage.hpp"
 
@@ -16,14 +17,20 @@ SqlStorage::SqlStorage(QObject *parent) : QObject(parent)
     queue = new QQueue<InverterData*>();
 
     timer = new QTimer();
-    timer->setInterval(60000);
+    timer->setInterval(3000);
 
     connect(timer, SIGNAL(timeout()), this, SLOT(copyQueueToDatabase()));
 }
 
 SqlStorage::~SqlStorage()
 {
+    timer->stop();
+    delete timer;
+
+    delete queue;
+
     sqldb->close();
+    delete sqldb;
 }
 
 void SqlStorage::start()
@@ -60,9 +67,13 @@ void SqlStorage::config(QString ip, int port, QString username, QString password
     sqldb->setDatabaseName(database);
 }
 
-void SqlStorage::addDataIntoQueue(InverterData* data)
+void SqlStorage::addDataIntoQueue(InverterData data)
 {
-    queue->enqueue(data);
+    InverterData* item = new InverterData(data);
+
+    queue->enqueue(item);
+
+    qDebug() << "DATABASE" << "COUNT" << queue->count();
 }
 
 void SqlStorage::copyQueueToDatabase()
@@ -93,7 +104,11 @@ void SqlStorage::copyQueueToDatabase()
         if(!sqlquery.exec())
             break;
 
+        qDebug() << "DATABASE" << "REMOVING" << elem->getRaw();
+
         queue->dequeue();
+
+        delete elem;
     }
 
     sqldb->close();

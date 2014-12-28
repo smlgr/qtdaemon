@@ -27,7 +27,7 @@ class SolarMaxLogger : public QObject
         UpdateMobile* mobile;
 
     private slots:
-        void printData(InverterData* data);
+        void printData(InverterData data);
 };
 
 #endif // INVERTERQUERY_HPP

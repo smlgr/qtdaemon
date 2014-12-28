@@ -5,6 +5,22 @@ InverterData::InverterData()
 
 }
 
+InverterData::InverterData(InverterData& other)
+{
+    datetime = other.datetime;
+    raw = other.raw;
+    udc = other.udc;
+    idc = other.idc;
+    ul1 = other.ul1;
+    il1 = other.il1;
+    pac = other.pac;
+    prl = other.prl;
+    tkk = other.tkk;
+    tnf = other.tnf;
+    kdy = other.kdy;
+    kld = other.kld;
+}
+
 InverterData::~InverterData()
 {
 

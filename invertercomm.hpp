@@ -28,8 +28,6 @@ class InverterComm: public QObject
         int getId() const;
         void setId(int value);
 
-        InverterData* getResponse() const;
-
     private:
         QString ip;
         int port;
@@ -38,7 +36,6 @@ class InverterComm: public QObject
 
         bool running;
         QTcpSocket* sock;
-        InverterData* response;
 
         QString prepareQuery();
         bool checkInvParams();
@@ -47,7 +44,7 @@ class InverterComm: public QObject
         void closeSocket();
 
     signals:
-        void newResponse(InverterData*);
+        void newResponse(InverterData);
 
     private slots:
         void writeNewQuery();

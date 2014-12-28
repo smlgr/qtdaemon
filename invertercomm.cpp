@@ -17,13 +17,11 @@ InverterComm::InverterComm(QObject *parent) : QObject(parent)
     connect(sock, SIGNAL(disconnected()), this, SLOT(resetRunning()));
 
     running = false;
-
-    response = nullptr;
 }
 
 InverterComm::~InverterComm()
 {
-
+    delete sock;
 }
 
 QString InverterComm::getQuery() const
@@ -65,11 +63,6 @@ void InverterComm::setId(int value)
     id = value;
 }
 
-InverterData* InverterComm::getResponse() const
-{
-    return response;
-}
-
 void InverterComm::sendNewQuery()
 {
     if(running)
@@ -96,15 +89,12 @@ void InverterComm::readResponse()
 
 void InverterComm::parseResponse(QByteArray data)
 {
-    if(response != nullptr)
-        delete response;
+    InverterData response;
 
-    response = new InverterData();
-
-    response->setDatetime(QDateTime::currentDateTime());
+    response.setDatetime(QDateTime::currentDateTime());
 
     QString resp(data);
-    response->setRaw(resp);
+    response.setRaw(resp);
 
     QStringList frag = resp.split("|");
 
@@ -114,34 +104,34 @@ void InverterComm::parseResponse(QByteArray data)
         int val = i[1].toInt(nullptr, 16);
 
         if(i[0] == "UDC")
-            response->setUdc((float) val / 10);
+            response.setUdc((float) val / 10);
 
         if(i[0] == "IDC")
-            response->setIdc((float) val / 100);
+            response.setIdc((float) val / 100);
 
         if(i[0] == "UL1")
-            response->setUl1((float) val / 10);
+            response.setUl1((float) val / 10);
 
         if(i[0] == "IL1")
-            response->setIl1((float) val / 100);
+            response.setIl1((float) val / 100);
 
         if(i[0] == "PAC")
-            response->setPac((float) val / 2);
+            response.setPac((float) val / 2);
 
         if(i[0] == "PRL")
-            response->setPrl(val);
+            response.setPrl(val);
 
         if(i[0] == "TKK")
-            response->setTkk(val);
+            response.setTkk(val);
 
         if(i[0] == "TNF")
-            response->setTnf((float) val / 100);
+            response.setTnf((float) val / 100);
 
         if(i[0] == "KDY")
-            response->setKdy((float) val / 10);
+            response.setKdy((float) val / 10);
 
         if(i[0] == "KLD")
-            response->setKld((float) val / 10);
+            response.setKld((float) val / 10);
     }
 
     emit newResponse(response);

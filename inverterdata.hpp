@@ -8,6 +8,8 @@ class InverterData
 {
     public:
         InverterData();
+        InverterData(InverterData& other);
+
         ~InverterData();
 
         QDateTime getDatetime() const;

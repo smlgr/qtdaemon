@@ -13,7 +13,7 @@ SolarMaxLogger::SolarMaxLogger(QObject *parent) : QObject(parent)
     timer->setSingleShot(false);
     timer->setInterval(SMLGR_CONFIG_DEFAULT_INTERVAL);
 
-    inv = new InverterComm();
+    inv = new InverterComm(this);
     inv->setIp(SMLGR_CONFIG_DEFAULT_INV_ADDR);
     inv->setPort(SMLGR_CONFIG_DEFAULT_INV_PORT);
     inv->setId(SMLGR_CONFIG_DEFAULT_INV_NUM);
@@ -28,18 +28,27 @@ SolarMaxLogger::SolarMaxLogger(QObject *parent) : QObject(parent)
 
     connect(timer, SIGNAL(timeout()), inv, SLOT(sendNewQuery()));
 
-    connect(inv, SIGNAL(newResponse(InverterData*)), this, SLOT(printData(InverterData*)));
-    connect(inv, SIGNAL(newResponse(InverterData*)), sql, SLOT(addDataIntoQueue(InverterData*)));
-    connect(inv, SIGNAL(newResponse(InverterData*)), mobile, SLOT(update(InverterData*)));
+//    connect(inv, SIGNAL(newResponse(InverterData)), this, SLOT(printData(InverterData)));
+    connect(inv, SIGNAL(newResponse(InverterData)), sql, SLOT(addDataIntoQueue(InverterData)));
+    connect(inv, SIGNAL(newResponse(InverterData)), mobile, SLOT(update(InverterData)));
 }
 
 SolarMaxLogger::~SolarMaxLogger()
 {
+    delete mobile;
+
+    timer->stop();
+    delete timer;
+
+    delete inv;
+
+    sql->stop();
+    delete sql;
 }
 
-void SolarMaxLogger::printData(InverterData* data)
+void SolarMaxLogger::printData(InverterData data)
 {
-    qDebug() << data->getRaw();
+    qDebug() << data.getRaw();
 }
 
 void SolarMaxLogger::start()

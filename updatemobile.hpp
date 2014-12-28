@@ -18,10 +18,7 @@ class UpdateMobile : public QObject
         QNetworkAccessManager* networkManager;
 
     public slots:
-        void update(InverterData*data);
-
-    private slots:
-        void confirm(QNetworkReply* reply);
+        void update(InverterData data);
 };
 
 #endif // UPDATEMOBILE_HPP

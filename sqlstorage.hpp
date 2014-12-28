@@ -27,7 +27,7 @@ class SqlStorage : public QObject
         QTimer* timer;
 
     public slots:
-        void addDataIntoQueue(InverterData* data);
+        void addDataIntoQueue(InverterData data);
 
     private slots:
         void copyQueueToDatabase();
