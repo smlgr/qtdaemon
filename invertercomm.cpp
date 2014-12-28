@@ -17,6 +17,8 @@ InverterComm::InverterComm(QObject *parent) : QObject(parent)
     connect(sock, SIGNAL(disconnected()), this, SLOT(resetRunning()));
 
     running = false;
+
+    response = nullptr;
 }
 
 InverterComm::~InverterComm()
