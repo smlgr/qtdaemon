@@ -79,8 +79,10 @@ void SqlStorage::addDataIntoQueue(InverterData data)
 
 void SqlStorage::copyQueueToDatabase()
 {
-    if(!sqldb->open())
+    if(!sqldb->open()) {
+        qDebug() << sqldb->lastError().driverText();
         return;
+    }
 
     while(!queue->isEmpty()) {
         InverterData* elem = queue->head();
