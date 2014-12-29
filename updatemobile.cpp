@@ -40,6 +40,4 @@ void UpdateMobile::update(InverterData data)
 void UpdateMobile::logRequest(QNetworkReply* reply)
 {
     qDebug() << reply->readAll();
-
-    delete reply;
 }

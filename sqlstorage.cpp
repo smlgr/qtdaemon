@@ -80,9 +80,11 @@ void SqlStorage::addDataIntoQueue(InverterData data)
 void SqlStorage::copyQueueToDatabase()
 {
     if(!sqldb->open()) {
-        qDebug() << sqldb->lastError().driverText();
+        qDebug() << "DATABASE ERROR" << sqldb->lastError().driverText();
         return;
     }
+
+    qDebug() << "DATABASE START";
 
     while(!queue->isEmpty()) {
         InverterData* elem = queue->head();
@@ -104,8 +106,11 @@ void SqlStorage::copyQueueToDatabase()
         sqlquery.bindValue(":TNF", QVariant((int) (elem->getTnf() * 100)));
         sqlquery.bindValue(":KDY", QVariant((int) (elem->getKdy() * 10)));
 
-        if(!sqlquery.exec())
+        if(!sqlquery.exec()) {
+            qDebug() << "DATABASE ERROR" << sqlquery.lastError().databaseText();
+            qDebug() << "DATABASE ERROR" << sqlquery.lastError().driverText();
             break;
+        }
 
         qDebug() << "DATABASE" << "REMOVING" << elem->getRaw();
 
