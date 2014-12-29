@@ -19,6 +19,9 @@ class UpdateMobile : public QObject
 
     public slots:
         void update(InverterData data);
+
+    private slots:
+        void logRequest(QNetworkReply* reply);
 };
 
 #endif // UPDATEMOBILE_HPP

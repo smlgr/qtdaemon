@@ -11,7 +11,7 @@ SolarMaxLogger::SolarMaxLogger(QObject *parent) : QObject(parent)
 {
     timer = new QTimer(this);
     timer->setSingleShot(false);
-    timer->setInterval(SMLGR_CONFIG_DEFAULT_INTERVAL);
+    timer->setInterval(SMLGR_CONFIG_DEFAULT_INV_INTERVAL);
 
     inv = new InverterComm(this);
     inv->setIp(SMLGR_CONFIG_DEFAULT_INV_ADDR);

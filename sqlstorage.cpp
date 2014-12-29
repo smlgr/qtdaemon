@@ -9,6 +9,7 @@
 #include <QDebug>
 
 #include "sqlstorage.hpp"
+#include "config.hpp"
 
 SqlStorage::SqlStorage(QObject *parent) : QObject(parent)
 {
@@ -17,7 +18,7 @@ SqlStorage::SqlStorage(QObject *parent) : QObject(parent)
     queue = new QQueue<InverterData*>();
 
     timer = new QTimer();
-    timer->setInterval(3000);
+    timer->setInterval(SMLGR_CONFIG_DEFAULT_SQL_INTERVAL);
 
     connect(timer, SIGNAL(timeout()), this, SLOT(copyQueueToDatabase()));
 }

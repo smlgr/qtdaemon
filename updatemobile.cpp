@@ -10,6 +10,8 @@
 UpdateMobile::UpdateMobile(QObject *parent) : QObject(parent)
 {
     networkManager = new QNetworkAccessManager(this);
+
+    connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(logRequest(QNetworkReply*)));
 }
 
 UpdateMobile::~UpdateMobile()
@@ -32,7 +34,10 @@ void UpdateMobile::update(InverterData data)
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
-    QNetworkReply* reply = networkManager->post(request, params.encodedQuery());
+    networkManager->post(request, params.encodedQuery());
+}
 
-    delete reply;
+void UpdateMobile::logRequest(QNetworkReply* reply)
+{
+    qDebug() << reply->readAll();
 }
